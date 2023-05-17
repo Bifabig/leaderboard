@@ -67,7 +67,8 @@ body {
   border-radius: none;
 }
 
-#add {
+#add,
+#ref {
   height: 30px;
   width: 80px;
   border: black soild 2px;
@@ -77,6 +78,6 @@ body {
   background: white;
 }
 
-.list #add {
+.list #ref {
   align-self: auto;
 }

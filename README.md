@@ -61,6 +61,7 @@
 - **ES6 syntax**
 - **Use Separate Modules**
 - **DOM manipulation**
+- **Use Fetch API**
 
 <!-- > Describe between 1-3 key features of the application. -->
 
@@ -168,7 +169,7 @@ Example:
 
 ## 🔭 Future Features <a name="future-features"></a>
 
-- **Implement Leaderboard API**
+- **Finish styling**
 
 <!-- > Mention future features. -->
 
