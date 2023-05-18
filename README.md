@@ -169,7 +169,7 @@ Example:
 
 ## 🔭 Future Features <a name="future-features"></a>
 
-- **Finish styling**
+- **Add more content**
 
 <!-- > Mention future features. -->
 
