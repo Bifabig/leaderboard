@@ -1,18 +1,59 @@
 import './style.css';
 import Student from './student.js';
 
-let studentList = [];
+let gameId = {};
+let key = '';
 
-const previousStudentList = JSON.parse(localStorage.getItem('studentList'));
-if (previousStudentList) {
-  studentList = [...previousStudentList];
-}
+// creates the game
+const myGame = async () => {
+  await fetch(
+    'https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/',
+    {
+      method: 'POST',
+      body: JSON.stringify({ name: 'leaderboard' }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    },
+  )
+    .then((response) => response.json())
+    .then((json) => {
+      gameId = json.result.slice(14, 34);
+      // save key on local storage
+      localStorage.setItem('leaderboard_key', JSON.stringify(gameId));
+    });
+};
 
+// get key from local storage
+key = JSON.parse(localStorage.getItem('leaderboard_key'));
+
+// getting game data
+const getData = async () => {
+  await fetch(
+    `https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/${key}/scores/`,
+  )
+    .then((response) => response.json())
+    .then((json) => {
+      const recentScores = document.querySelector('.recent-scores');
+      recentScores.innerHTML = '';
+      json.result.forEach((studentItem) => {
+        const students = document.createElement('tr');
+
+        const student = document.createElement('td');
+        student.setAttribute('id', `${studentItem.id}`);
+        student.textContent = `${studentItem.user}: ${studentItem.score}`;
+        students.append(student);
+        recentScores.append(students);
+      });
+    });
+};
+
+// sending game data
 const name = document.getElementById('name');
 const score = document.getElementById('score');
 const form = document.querySelector('.add-score');
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   const myStudent = new Student(name.value, score.value);
   const msg = document.querySelector('small');
 
@@ -20,25 +61,33 @@ form.addEventListener('submit', (e) => {
   myStudent.storeStudent();
 
   if (name.value && score.value !== '') {
-    myStudent.addStudent();
-    studentList.push(myStudent);
     msg.innerText = '';
   } else {
     msg.innerText = '* name and score required';
   }
 
-  localStorage.setItem('studentList', JSON.stringify(studentList));
+  await fetch(
+    `https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/${key}/scores/`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ user: myStudent.name, score: myStudent.score }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    },
+  )
+    .then((response) => response.json())
+    .then((json) => json);
 
   form.reset();
+  getData();
 });
 
-const recentScores = document.querySelector('.recent-scores');
-studentList.forEach((studentItem) => {
-  const students = document.createElement('tr');
-
-  const student = document.createElement('td');
-  student.setAttribute('id', `${studentItem.id}`);
-  student.textContent = `${studentItem.name}: ${studentItem.score}`;
-  students.append(student);
-  recentScores.append(students);
+// handle refresh button
+const refresh = document.getElementById('ref');
+refresh.addEventListener('click', (e) => {
+  e.preventDefault();
+  getData();
 });
+
+myGame();
