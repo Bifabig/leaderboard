@@ -34,15 +34,19 @@ const getData = async () => {
   )
     .then((response) => response.json())
     .then((json) => {
-      const recentScores = document.querySelector('.recent-scores');
+      // const recentScores = document.querySelector('.recent-scores');
+      const recentScores = document.querySelector('.table-body');
       recentScores.innerHTML = '';
       json.result.forEach((studentItem) => {
         const students = document.createElement('tr');
 
-        const student = document.createElement('td');
-        student.setAttribute('id', `${studentItem.id}`);
-        student.textContent = `${studentItem.user}: ${studentItem.score}`;
-        students.append(student);
+        const name = document.createElement('td');
+        const score = document.createElement('td');
+        students.setAttribute('id', `${studentItem.id}`);
+        name.textContent = `${studentItem.user}`;
+        score.textContent = `${studentItem.score}`;
+        students.append(name);
+        students.append(score);
         recentScores.append(students);
       });
     });
